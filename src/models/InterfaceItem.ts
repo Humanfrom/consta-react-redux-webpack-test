@@ -1,9 +1,12 @@
+import {FC} from 'react';
+
+//основной интерфейс элемента списка
 export interface InterfaceItem {
-  id: number;
-  orderDate: Date;
+  id: string;
+  orderDate: string;
   name: string;
   recipient: string;
-  endDate: Date;
-  state: number;
+  endDate: string;
+  state: FC;
   zone: string;
 }

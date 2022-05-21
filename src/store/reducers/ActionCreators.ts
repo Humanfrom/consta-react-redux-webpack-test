@@ -1,6 +1,8 @@
+import {AppDispatch} from '../store'
 import axios from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {transformToFakeData} from '../../utils'
+import {itemsSlice} from './ItemsSlice'
 
 export interface IApi {
     id: number;
@@ -9,14 +11,53 @@ export interface IApi {
     stock: number;
 }
 
-export const getItems = createAsyncThunk(
-  'items/fetchAll',
-  async (params, thunkAPI) => {
-    try {
-      const response = await axios.get('https://dummyjson.com/products', {params})
-      return transformToFakeData(response.data.products)
-    } catch (e) {
-      return thunkAPI.rejectWithValue('Не удалось загрузить данные')
-    }
+//хелпер отчищающий список загруженных элементов
+export const clearItems = () => (dispatch: AppDispatch) => {
+  dispatch(itemsSlice.actions.clearItems())
+}
+
+//хелпер для последовательной загрузки элементов, если передаём 1 аргумент, то грузим с самого начала списка
+export const getItems = (limit: number, skip:number = 0) => async (dispatch: AppDispatch) => {
+  try {
+    //запускаем загрузку
+    dispatch(itemsSlice.actions.getItemsList())
+    //пытаемся подгрузить данные через API
+    const response = await axios({
+        method: 'get',
+        url: 'https://dummyjson.com/products',
+        params: {
+          limit: limit,
+          skip: skip
+        }
+      });
+    //всё получилось загружаем в хранилище
+    dispatch(itemsSlice.actions.getItemsListSuccess(
+        transformToFakeData(response.data.products) as any //адаптация полей из API к полям проекта
+      ))
+  } catch (e: any) {
+    dispatch(itemsSlice.actions.getItemsListError(e.message)) //обработка исключения
   }
-)
+}
+
+//хелпер для обработки функции поиска
+export const getSearchedItems = (query: string) => async (dispatch: AppDispatch) => {
+  try {
+    //запускаем загрузку
+    dispatch(itemsSlice.actions.getItemsList())
+    //пытаемся подгрузить данные через API
+    const response = await axios({
+        method: 'get',
+        url: 'https://dummyjson.com/products/search',
+        params: {
+          q: query
+        }
+      });
+    //всё получилось загружаем в хранилище
+    dispatch(itemsSlice.actions.getSearchedItemsListSuccess(
+      transformToFakeData(response.data.products) as any //адаптация полей из API к полям проекта
+    ))
+
+  } catch (e: any) {
+    dispatch(itemsSlice.actions.getItemsListError(e.message)) //обработка исключения
+  }
+}

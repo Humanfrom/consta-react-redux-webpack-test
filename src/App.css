@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+html {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.card {
+  width: 1300px;
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-line {
+  display: flex;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.body-content {
+  max-height: 690px;
+}
+
+.footer {
+  border-top: 1px solid lightgrey;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 30px
+}
+
+.footer-select {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: lightgrey;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
