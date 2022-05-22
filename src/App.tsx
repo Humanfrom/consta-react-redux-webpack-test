@@ -40,18 +40,18 @@ const App: FC = () => {
     onGetItmes()
   },[])
 
-  //функция получения списка товаров через API, если ничего не передаём, то выводим как при старте
+  //функция получения списка товаров через API, если ничего не передаём, то по дефолту
   const onGetItmes = (count: number = 0) => {
-
+    //первый аргумент - сколько грузим товаров, второй - отступ от начала списка
     const newParams = count ? {
       limit: count,
       skip: params.skip + params.limit
     }
     :
     defaultParams
-    //первый аргумент - сколько грузим товаров, второй - отступ от начала списка
-    dispatch(getItems( newParams ));
-    setParams( newParams );
+
+    dispatch(getItems(newParams));
+    setParams(newParams);
   }
 
   //функция поиска - передаём строку поиска
