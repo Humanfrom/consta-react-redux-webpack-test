@@ -24,7 +24,7 @@ const Footer: FC<TFooter> = ({ currentCount, onGetItmes, isSearch }) => {
     { label:'5' , number: 5 },
     { label:'10', number: 10 },
     { label:'20', number: 20 },
-    { label:'50', number: 50 }
+    { label:'30', number: 30 }
   ];
 
   const [selectedCount, setSelectedCount] = useState<TCount>(count[2]) //выбранная опция на данный момент
