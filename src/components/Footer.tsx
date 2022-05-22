@@ -2,7 +2,7 @@ import {FC, useState, useEffect} from 'react';
 import { Select } from '@consta/uikit/Select';
 import { Button } from '@consta/uikit/Button'
 import { Text } from '@consta/uikit/Text';
-import {InterfaceItem} from '../models/InterfaceItem'
+import { TParams } from '../App'
 
 type TCount = {
   label: string;
@@ -10,13 +10,13 @@ type TCount = {
 };
 
 type TFooter = {
-  items: InterfaceItem[];
-  onAddItmes: Function;
+  currentCount: number;
+  onGetItmes: Function;
   isSearch: boolean;
 }
 
 //контейнерный элемент, который может быть переиспользуем, если мы хотим сделать более одного окна
-const Footer: FC<TFooter> = ({ items, onAddItmes, isSearch }) => {
+const Footer: FC<TFooter> = ({ currentCount, onGetItmes, isSearch }) => {
 
   //варианты количества догружаемых страниц
   const count: TCount[] = [
@@ -28,29 +28,29 @@ const Footer: FC<TFooter> = ({ items, onAddItmes, isSearch }) => {
   ];
 
   const [selectedCount, setSelectedCount] = useState<TCount>(count[2]) //выбранная опция на данный момент
-  const [localValue, setLocalValue] = useState<number>(items.length) //количество элементов для загрузки
+  const [totalCount, setTotalCount] = useState<number>(currentCount) //количество элементов для загрузки
 
   //следим за массивом загруженных элементов и обновляем когда загрузилось
   useEffect(() => {
-    setLocalValue(items.length)
-  },[items])
+    setTotalCount(currentCount)
+  },[currentCount])
 
   //обработчик кнопки подгрузки
-  const onClickAddItems = () => {
-    setLocalValue(items.length + selectedCount.number) //указываем сколько должно быть загружено
-    onAddItmes(selectedCount.number) //начинаем загрузку пака элементов
+  const onClickGetMoreItems = () => {
+    setTotalCount(currentCount + selectedCount.number) //указываем сколько должно быть загружено
+    onGetItmes(selectedCount.number) //начинаем загрузку пака элементов
   }
 
   return (
     <div className="footer">
 
-        <Text size="s">Загружено: {`${items.length} из ${localValue}`}</Text>
+        <Text size="s">Загружено: {`${currentCount} из ${totalCount}`}</Text>
 
         <Button
         label={`Показать ещё ${selectedCount?.label}`}
         view="ghost"
         size='s'
-        onClick={onClickAddItems}
+        onClick={onClickGetMoreItems}
         disabled={isSearch}
         />
 

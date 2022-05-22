@@ -1,3 +1,4 @@
+import { getDefaultMiddleware } from '@reduxjs/toolkit';
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import itemsReduser from './reducers/ItemsSlice';
 
@@ -6,10 +7,16 @@ const rootReducer = combineReducers({
     itemsReduser
 })
 
+//настройка мидлвари, чтобы хранить не сериализуемые значения
+const customizedMiddleware = getDefaultMiddleware({
+  serializableCheck: false
+})
+
 //настраиваем хранилище - передаём редюсер и настройки мидлвари
 export const setupStore = () => {
   return configureStore({
-    reducer: rootReducer
+    reducer: rootReducer,
+    middleware: customizedMiddleware
   })
 }
 

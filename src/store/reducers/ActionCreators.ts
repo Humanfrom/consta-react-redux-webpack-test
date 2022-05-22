@@ -17,7 +17,7 @@ export const clearItems = () => (dispatch: AppDispatch) => {
 }
 
 //хелпер для последовательной загрузки элементов, если передаём 1 аргумент, то грузим с самого начала списка
-export const getItems = (limit: number, skip:number = 0) => async (dispatch: AppDispatch) => {
+export const getItems = (params: object) => async (dispatch: AppDispatch) => {
   try {
     //запускаем загрузку
     dispatch(itemsSlice.actions.getItemsList())
@@ -25,11 +25,9 @@ export const getItems = (limit: number, skip:number = 0) => async (dispatch: App
     const response = await axios({
         method: 'get',
         url: 'https://dummyjson.com/products',
-        params: {
-          limit: limit,
-          skip: skip
-        }
+        params: params
       });
+    console.log(response);
     //всё получилось загружаем в хранилище
     dispatch(itemsSlice.actions.getItemsListSuccess(
         transformToFakeData(response.data.products) as any //адаптация полей из API к полям проекта

@@ -14,13 +14,21 @@ import { getItems, getSearchedItems, clearItems } from './store/reducers/ActionC
 import { tableColumnsData } from './models/TableColumnItems'
 import './App.css'
 
+export type TParams = {
+  limit: number;
+  skip: number;
+}
+
 const App: FC = () => {
   //сколько в начальном состоянии отображать товаров
-  const defaultCount = 5;
+  const defaultParams: TParams = {
+    limit: 5,
+    skip: 0
+  };
 
   //хуки
   const {items, isLoading, error} = useAppSelector(state => state.itemsReduser) //данные из стора
-  const [limit, setLimit] = useState(defaultCount) //маркер количества загруженных элементов
+  const [params, setParams] = useState<TParams>(defaultParams) //маркер количества загруженных элементов
   const [isSearch, setIsSearch] = useState(false) //блокировка подгрузки во время поиска
   const dispatch = useAppDispatch() //диспетчер
 
@@ -33,18 +41,30 @@ const App: FC = () => {
   },[])
 
   //функция получения списка товаров через API, если ничего не передаём, то выводим как при старте
-  const onGetItmes = (addItems: number = defaultCount) => {
+  const onGetItmes = (count: number = 0) => {
+
+    const newParams = count ? {
+      limit: count,
+      skip: params.skip + params.limit
+    }
+    :
+    defaultParams
     //первый аргумент - сколько грузим товаров, второй - отступ от начала списка
-    dispatch(getItems( addItems, limit ));
-    setLimit(addItems);
-    setIsSearch(false); //разрешаем подгрузку товаров
+    dispatch(getItems( newParams ));
+    setParams( newParams );
   }
 
   //функция поиска - передаём строку поиска
   const onSearch = (query: string) => {
-    dispatch(getSearchedItems(query));
-    setLimit(defaultCount); //обнуляем старый список
+    dispatch(getSearchedItems(query)); //заполняем список
     setIsSearch(true); //блокируем подгрузку товаров
+  }
+
+  //функция отмены поиска
+  const onCancelSearch = () => {
+    dispatch(clearItems());
+    setIsSearch(false); //разрешаем подгрузку товаров
+    onGetItmes()
   }
 
   return (
@@ -60,11 +80,7 @@ const App: FC = () => {
             <div className="body-content">
 
               <Header
-              onCancel={() => {
-                //очищаем список элементов и загружаем как при старте
-                dispatch(clearItems());
-                onGetItmes();
-              }}
+              onCancel={onCancelSearch}
               onSearch={onSearch}
               />
 
@@ -90,8 +106,8 @@ const App: FC = () => {
             </div>
 
             <Footer
-            items={items}
-            onAddItmes={onGetItmes}
+            onGetItmes={onGetItmes}
+            currentCount={items.length}
             isSearch={isSearch}
             />
 
